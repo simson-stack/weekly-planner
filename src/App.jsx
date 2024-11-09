@@ -1,35 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+
+import Header from "./Header";
+import ToDoList from "./ToDoList";
+import TaskSummary from "./TaskSummary.jsx"
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const [completedTasks, setCompleted] = useState([]);
+    const [uncompletedTasks, setUncompletedTasks] = useState([]);
+    const [tasks, setTasks] = useState([]);
+
+    function handleAddNote() {
+        const newTask = document.getElementById('task-input').value;
+        document.getElementById('task-input').value = '';
+        if(newTask.trim() !== '') {
+            setTasks([...tasks, newTask]);
+        }
+    }
+
+    function handleCompletedTasks(index) {
+        const completedTask = tasks[index];
+        
+        // Remove the completed task from tasks and uncompletedTasks lists
+        const updatedTasks = tasks.filter((_, i) => i !== index);
+        
+        setTasks(updatedTasks);
+        setCompleted([...completedTasks, completedTask]); // Add to completedTasks
+    }
+    
+    function handleUncompletedTasks(index) {
+        const uncompletedTask = tasks[index];
+
+        const updatedTasks = tasks.filter((_, i) => i !== index);
+
+        setTasks(updatedTasks);
+        setUncompletedTasks([...uncompletedTasks, uncompletedTask]);
+    }
+    return(
+        <>
+            <Header/>
+            <ToDoList
+                completedTasks = {handleCompletedTasks}
+                tasks = {tasks}
+                handleAddNote = {handleAddNote}
+                uncompletedTasks = {handleUncompletedTasks}
+            />
+            <TaskSummary
+                done = {completedTasks}
+                notDone = {uncompletedTasks}
+                setDone = {setCompleted}
+                setNotDone = {setUncompletedTasks}
+            />
+        </>
+    );
 }
 
 export default App
